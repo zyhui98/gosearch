@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gosearch/module/baidu"
+	"gosearch/module/site/baidu"
 	"io"
 	"log"
 	"net/http"
@@ -39,7 +39,11 @@ func health(w http.ResponseWriter, request *http.Request) {
 func search(w http.ResponseWriter, request *http.Request) {
 	fmt.Println(request.URL)
 	_ = request.ParseForm()
-	fmt.Printf("q:%s", request.Form.Get("q"))
-	_, _ = io.WriteString(w, "ok")
+	q := request.Form.Get("q")
+	fmt.Printf("q:%s", q)
+	r := baidu.S(q)
+	fmt.Printf("resp:%v", r)
+
+	_, _ = io.WriteString(w, r)
 
 }
