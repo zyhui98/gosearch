@@ -3,7 +3,7 @@ package baidu
 import "fmt"
 
 const (
-	URL = "https://ifconfig.io"
+	URL = "https://www.baidu.com"
 )
 
 func init() {
