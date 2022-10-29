@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	http.Handle("/", http.FileServer(http.Dir("html")))
 	http.HandleFunc("/health", health)
 	http.HandleFunc("/search", search)
 	baidu.LoadConf()
