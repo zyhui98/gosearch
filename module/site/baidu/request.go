@@ -2,8 +2,9 @@ package baidu
 
 import (
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"gosearch/module/site"
-	"io/ioutil"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 )
 
 const SEARCH = URL + "/s?wd=%s" + "&usm=3&rsv_idx=2&rsv_page=1"
+const FROM = "百度"
 
 var tr *http.Transport
 
@@ -40,11 +42,24 @@ type Req struct {
 
 type Resp struct {
 	code int
-	body string
+	body io.ReadCloser
+}
+
+type EntityList struct {
+	index int
+	size  int
+	list  []Entity
+}
+
+type Entity struct {
+	title    string
+	url      string
+	subTitle string
+	from     string
 }
 
 func S(q string) (r string) {
-	return Search(q).body
+	return ""
 }
 
 func Search(q string) (r *Resp) {
@@ -61,8 +76,32 @@ func (req *Req) urlWrap() (url string) {
 	return fmt.Sprintf(SEARCH, req.q)
 }
 
+func (resp *Resp) toEntity() (entityList *EntityList) {
+	entityList = &EntityList{index: 0, size: 10}
+	if resp.body != nil {
+		// Load the HTML document
+		doc, err := goquery.NewDocumentFromReader(resp.body)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Find the review items
+		doc.Find(".c-container").Each(func(i int, s *goquery.Selection) {
+			// For each item found, get the title
+			title := s.Find("h3").Find("a").Text()
+			url := s.Find("h3").Find("a").AttrOr("href", "")
+			subTitle := s.Find("c-gap-top-small").Find("span").Text()
+			fmt.Printf("Review %d: %s\n", i, title)
+			fmt.Printf("Review %d: %s\n", i, url)
+			fmt.Printf("Review %d: %s\n", i, subTitle)
+		})
+
+	}
+	return entityList
+}
+
 func (req *Req) send() (resp *Resp, err error) {
-	r := &Resp{code: 200, body: ""}
+	resp = &Resp{code: 200, body: nil}
 
 	client := &http.Client{
 		Transport: tr,
@@ -83,12 +122,11 @@ func (req *Req) send() (resp *Resp, err error) {
 	//处理返回结果
 	response, _ := client.Do(request)
 	defer response.Body.Close()
-
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Println(err)
+	if response.StatusCode != 200 {
+		log.Fatalf("status code error: %d %s", response.StatusCode, response.Status)
 	}
-	r.body = string(body)
 
-	return r, nil
+	resp.body = response.Body
+
+	return resp, nil
 }
