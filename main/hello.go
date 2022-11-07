@@ -1,12 +1,19 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"gosearch/module/site/baidu"
 	"io"
 	"log"
 	"net/http"
 )
+
+type JsonResult struct {
+	Code int
+	Msg  string
+	Data interface{}
+}
 
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("html")))
@@ -41,10 +48,23 @@ func search(w http.ResponseWriter, request *http.Request) {
 	fmt.Println(request.URL)
 	_ = request.ParseForm()
 	q := request.Form.Get("q")
-	fmt.Printf("q:%s", q)
-	r := baidu.S(q)
-	fmt.Printf("resp:%v", r)
+	fmt.Printf("查询内容:%s\n", q)
+	resultBaidu := baidu.S(q)
+	resultBaiduJson, err := json.Marshal(resultBaidu)
+	fmt.Printf("baidu:%s\n", string(resultBaiduJson))
+	w.WriteHeader(200)
+	w.Header().Set("Content-Type", "application/json")
 
-	_, _ = io.WriteString(w, r)
-
+	jsonResult := &JsonResult{Code: 0}
+	jsonResult.Data = resultBaidu
+	body, err := json.Marshal(jsonResult)
+	if err != nil {
+		jsonResult.Code = -1
+		jsonResult.Msg = err.Error()
+		w.WriteHeader(500)
+		v, _ := json.Marshal(jsonResult)
+		_, _ = w.Write(v)
+		return
+	}
+	_, _ = w.Write(body)
 }

@@ -9,19 +9,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
 <body>
-<div class="homepage">
+<div class="homepage" id="hello-vue">
     <div class="page-header">
         <h1>GoSearch <small>Beta 1.0</small></h1>
     </div>
     <div class="row">
         <div class="col-lg-6">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for..."/>
+                <input v-model="q   " id="q" type="text" class="form-control" placeholder="Search for..."/>
                 <span class="input-group-btn"/>
-                <button type="button" class="btn btn-outline-primary">搜索</button>
+                <button type="button" class="btn btn-outline-primary" @click="search">搜索</button>
             </div><!-- /.col-lg-6 -->
         </div>
     </div><!-- /.row -->
+    <div class="row">&nbsp;</div>
+    <div class="card" style="width: 60%">
+        {{answer}}
+    </div>
     <div class="row">&nbsp;</div>
     <div class="card" style="width: 60%">
         <div class="card-body">
@@ -35,6 +39,33 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@3.2.41/dist/vue.global.js" crossorigin="anonymous"></script>
+<script src="https://cdn.staticfile.org/axios/0.27.2/axios.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/3.2.37/vue.global.min.js"></script>
+<script>
+    const HelloVueApp = {
+        data() {
+            return {
+                message: 'Hello Vue!!',
+                answer: '',
+                q: ''
+            }
+        },
+        methods: {
+            search() {
+                this.answer = '加载中...'
+                axios
+                    .get('/search?q=' + this.q)
+                    .then(response => {
+                        this.answer = response.data
+                    })
+                    .catch(error => {
+                        this.answer = '错误! 无法访问 API。 ' + error
+                    })
+            }
+        }
+    }
+    Vue.createApp(HelloVueApp).mount('#hello-vue')
+
+</script>
 </body>
 </html>

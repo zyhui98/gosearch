@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"gosearch/module/site"
-	"io"
 	"log"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -42,66 +42,72 @@ type Req struct {
 
 type Resp struct {
 	code int
-	body io.ReadCloser
+	body string
+	doc  *goquery.Document
 }
 
 type EntityList struct {
-	index int
-	size  int
-	list  []Entity
+	Index int
+	Size  int
+	List  []Entity
 }
 
 type Entity struct {
-	title    string
-	url      string
-	subTitle string
-	from     string
+	Title    string
+	Host     string
+	Url      string
+	SubTitle string
+	From     string
 }
 
-func S(q string) (r string) {
-	return ""
+func S(q string) (result *EntityList) {
+	return Search(q)
 }
 
-func Search(q string) (r *Resp) {
+func Search(q string) (result *EntityList) {
 	req := &Req{}
 	req.q = q
 	req.url = req.urlWrap()
-	send, _ := req.send()
-
-	resp := Resp{0, send.body}
-	return &resp
+	resp, _ := req.send()
+	result = resp.toEntityList()
+	return result
 }
 
 func (req *Req) urlWrap() (url string) {
 	return fmt.Sprintf(SEARCH, req.q)
 }
 
-func (resp *Resp) toEntity() (entityList *EntityList) {
-	entityList = &EntityList{index: 0, size: 10}
-	if resp.body != nil {
-		// Load the HTML document
-		doc, err := goquery.NewDocumentFromReader(resp.body)
-		if err != nil {
-			log.Fatal(err)
-		}
-
+func (resp *Resp) toEntityList() (entityList *EntityList) {
+	entityList = &EntityList{Index: 0, Size: 10}
+	entityList.List = []Entity{}
+	if resp.doc != nil {
 		// Find the review items
-		doc.Find(".c-container").Each(func(i int, s *goquery.Selection) {
-			// For each item found, get the title
+		//fmt.Printf("Review doc: %s\n", resp.doc.Text())
+		resp.doc.Find(".c-container").Each(func(i int, s *goquery.Selection) {
+			// For each item found, get the Title
 			title := s.Find("h3").Find("a").Text()
 			url := s.Find("h3").Find("a").AttrOr("href", "")
-			subTitle := s.Find("c-gap-top-small").Find("span").Text()
-			fmt.Printf("Review %d: %s\n", i, title)
-			fmt.Printf("Review %d: %s\n", i, url)
-			fmt.Printf("Review %d: %s\n", i, subTitle)
+			subTitle := s.Find(".c-gap-top-small").Find("span").Text()
+			if site.Debug {
+				fmt.Printf("Review Title: %s\n", title)
+				fmt.Printf("Review Url: %s\n", url)
+				fmt.Printf("Review SubTitle: %s\n", subTitle)
+			}
+			entity := Entity{From: FROM}
+			entity.Title = title
+			entity.SubTitle = subTitle
+			entity.Url = url
+			host := strings.ReplaceAll(url, "http://", "")
+			host = strings.ReplaceAll(host, "https://", "")
+			entity.Host = strings.Split(host, "/")[0]
+			entityList.List = append(entityList.List, entity)
 		})
-
 	}
 	return entityList
 }
 
 func (req *Req) send() (resp *Resp, err error) {
-	resp = &Resp{code: 200, body: nil}
+	resp = &Resp{code: 200}
 
 	client := &http.Client{
 		Transport: tr,
@@ -113,8 +119,11 @@ func (req *Req) send() (resp *Resp, err error) {
 	}
 
 	//增加header选项
-	request.Header.Add("User-Agent", site.USER_AGENT)
-	request.Header.Add("X-Requested-With", "XMLHttpRequest")
+	request.Header.Add("User-Agent", site.UserAgent)
+	request.Header.Add("Host", DOMAIN)
+	request.Header.Add("Cookie", site.BaiduCookie)
+	request.Header.Add("Accept", ACCEPT)
+	//request.Header.Add("X-Requested-With", "XMLHttpRequest")
 	if err != nil {
 		panic(err)
 	}
@@ -124,9 +133,16 @@ func (req *Req) send() (resp *Resp, err error) {
 	defer response.Body.Close()
 	if response.StatusCode != 200 {
 		log.Fatalf("status code error: %d %s", response.StatusCode, response.Status)
+		return nil, nil
+	}
+	// Load the HTML document
+	doc, err := goquery.NewDocumentFromReader(response.Body)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	resp.body = response.Body
+	resp.code = 200
+	resp.doc = doc
 
 	return resp, nil
 }
