@@ -47,17 +47,17 @@ type Resp struct {
 }
 
 type EntityList struct {
-	Index int
-	Size  int
-	List  []Entity
+	Index int      `json:"index"`
+	Size  int      `json:"size"`
+	List  []Entity `json:"list"`
 }
 
 type Entity struct {
-	Title    string
-	Host     string
-	Url      string
-	SubTitle string
-	From     string
+	Title    string `json:"title"`
+	Host     string `json:"host"`
+	Url      string `json:"url"`
+	SubTitle string `json:"subTitle"`
+	From     string `json:"from"`
 }
 
 func S(q string) (result *EntityList) {
@@ -68,6 +68,7 @@ func Search(q string) (result *EntityList) {
 	req := &Req{}
 	req.q = q
 	req.url = req.urlWrap()
+	fmt.Printf("req.url: %s\n", req.url)
 	resp, _ := req.send()
 	result = resp.toEntityList()
 	return result
@@ -80,13 +81,18 @@ func (req *Req) urlWrap() (url string) {
 func (resp *Resp) toEntityList() (entityList *EntityList) {
 	entityList = &EntityList{Index: 0, Size: 10}
 	entityList.List = []Entity{}
+
 	if resp.doc != nil {
 		// Find the review items
 		//fmt.Printf("Review doc: %s\n", resp.doc.Text())
-		resp.doc.Find(".c-container").Each(func(i int, s *goquery.Selection) {
+		resp.doc.Find("div[srcid]").Each(func(i int, s *goquery.Selection) {
 			// For each item found, get the Title
 			title := s.Find("h3").Find("a").Text()
-			url := s.Find("h3").Find("a").AttrOr("href", "")
+			url := s.AttrOr("mu", "")
+			tpl := s.AttrOr("tpl", "")
+			if tpl != "se_com_default" {
+				return
+			}
 			subTitle := s.Find(".c-gap-top-small").Find("span").Text()
 			if site.Debug {
 				fmt.Printf("Review Title: %s\n", title)
