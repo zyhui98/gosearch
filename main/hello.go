@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gosearch/module/site/baidu"
+	"gosearch/module/site/bing"
 	"io"
 	"log"
 	"net/http"
@@ -20,6 +21,7 @@ func main() {
 	http.HandleFunc("/health", health)
 	http.HandleFunc("/search", search)
 	baidu.LoadConf()
+	bing.LoadConf()
 	go func() {
 		log.Println("go in")
 		defer func() {
@@ -45,18 +47,16 @@ func health(w http.ResponseWriter, request *http.Request) {
 }
 
 func search(w http.ResponseWriter, request *http.Request) {
+
 	fmt.Println(request.URL)
 	_ = request.ParseForm()
 	q := request.Form.Get("q")
 	fmt.Printf("查询内容:%s\n", q)
-	resultBaidu := baidu.S(q)
-	resultBaiduJson, err := json.Marshal(resultBaidu)
-	fmt.Printf("baidu:%s\n", string(resultBaiduJson))
-	w.WriteHeader(200)
-	w.Header().Set("Content-Type", "application/json")
-
 	jsonResult := &JsonResult{Code: 0}
+
+	resultBaidu := bing.S(q)
 	jsonResult.Data = resultBaidu
+
 	body, err := json.Marshal(jsonResult)
 	if err != nil {
 		jsonResult.Code = -1
@@ -66,5 +66,7 @@ func search(w http.ResponseWriter, request *http.Request) {
 		_, _ = w.Write(v)
 		return
 	}
+	w.WriteHeader(200)
+	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(body)
 }
