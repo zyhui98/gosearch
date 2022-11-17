@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (baidu Baidu) Search() (result *EntityList) {
+func (baidu *Baidu) Search() (result *EntityList) {
 	baidu.Req.url = baidu.urlWrap()
 	fmt.Printf("req.url: %s\n", baidu.Req.url)
 	resp := &Resp{}
@@ -18,11 +18,11 @@ func (baidu Baidu) Search() (result *EntityList) {
 	return result
 }
 
-func (baidu Baidu) urlWrap() (url string) {
+func (baidu *Baidu) urlWrap() (url string) {
 	return fmt.Sprintf(BaiduSearch, baidu.Req.Q)
 }
 
-func (baidu Baidu) toEntityList() (entityList *EntityList) {
+func (baidu *Baidu) toEntityList() (entityList *EntityList) {
 	entityList = &EntityList{Index: 0, Size: 10}
 	entityList.List = []Entity{}
 
@@ -56,7 +56,7 @@ func (baidu Baidu) toEntityList() (entityList *EntityList) {
 	return entityList
 }
 
-func (baidu Baidu) send() (resp *Resp, err error) {
+func (baidu *Baidu) send() (resp *Resp, err error) {
 	resp = &Resp{code: 200}
 
 	client := &http.Client{

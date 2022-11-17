@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (bing Bing) Search() (result *EntityList) {
+func (bing *Bing) Search() (result *EntityList) {
 	bing.Req.url = bing.urlWrap()
 	fmt.Printf("req.url: %s\n", bing.Req.url)
 	resp := &Resp{}
@@ -18,11 +18,11 @@ func (bing Bing) Search() (result *EntityList) {
 	return result
 }
 
-func (bing Bing) urlWrap() (url string) {
+func (bing *Bing) urlWrap() (url string) {
 	return fmt.Sprintf(BingSearch, bing.Req.Q)
 }
 
-func (bing Bing) toEntityList() (entityList *EntityList) {
+func (bing *Bing) toEntityList() (entityList *EntityList) {
 	entityList = &EntityList{Index: 0, Size: 10}
 	entityList.List = []Entity{}
 
@@ -52,7 +52,7 @@ func (bing Bing) toEntityList() (entityList *EntityList) {
 	return entityList
 }
 
-func (bing Bing) send() (resp *Resp, err error) {
+func (bing *Bing) send() (resp *Resp, err error) {
 	resp = &Resp{code: 200}
 
 	client := &http.Client{
