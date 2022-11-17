@@ -3,25 +3,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"gosearch/module/site/baidu"
-	"gosearch/module/site/bing"
+	"gosearch/module/site"
 	"io"
 	"log"
 	"net/http"
 )
 
-type JsonResult struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
-}
-
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("html")))
 	http.HandleFunc("/health", health)
 	http.HandleFunc("/search", search)
-	baidu.LoadConf()
-	bing.LoadConf()
+	site.LoadConf()
 	go func() {
 		log.Println("go in")
 		defer func() {
@@ -52,10 +44,23 @@ func search(w http.ResponseWriter, request *http.Request) {
 	_ = request.ParseForm()
 	q := request.Form.Get("q")
 	fmt.Printf("查询内容:%s\n", q)
-	jsonResult := &JsonResult{Code: 0}
+	jsonResult := &site.JsonResult{Code: 0, Data: &site.EntityList{
+		Index: 0,
+		Size:  0,
+		List:  []site.Entity{},
+	}}
 
-	resultBaidu := bing.S(q)
-	jsonResult.Data = resultBaidu
+	array := [...]site.SearchEngine{
+		&site.Bing{Req: site.Req{Q: q}},
+		&site.Baidu{Req: site.Req{Q: q}}}
+
+	for _, engine := range array {
+		result := engine.(site.SearchEngine).Search()
+		jsonResult.Data.Size += result.Size
+		for _, entity := range result.List {
+			jsonResult.Data.List = append(jsonResult.Data.List, entity)
+		}
+	}
 
 	body, err := json.Marshal(jsonResult)
 	if err != nil {

@@ -1,4 +1,4 @@
-package baidu
+package site
 
 import (
 	"encoding/json"
@@ -6,8 +6,8 @@ import (
 )
 
 func TestBaidu(t *testing.T) {
-
-	s := S("yuanbiguo")
+	engine := &Baidu{Req: Req{Q: "yuanbiguo"}}
+	s := engine.Search()
 	marshal, _ := json.Marshal(s)
 	println(string(marshal))
 }
