@@ -23,6 +23,7 @@
 
 - goquery
 - yaml.v2
+- bootstrap5
 
 ## 使用说明
 
