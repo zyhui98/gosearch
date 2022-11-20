@@ -1,9 +1,28 @@
-basic:
+server:
   debug: true
 
-site:
+search:
   - name: Baidu
     domain: www.baidu.com
-    weight:
+    weight: 1
+    positionWeight: 1
+    score: 0
   - name: Bing
     domain: cn.bing.com
+    weight: 1
+    positionWeight: 1
+    score: 10
+
+site:
+  - domain: www.csdn.com
+    weight: 1
+    score: 0
+  - domain: zhuanlan.zhihu.com
+    weight: 1
+    score: 0
+  - domain: www.yuanbiguo.com
+    weight: 1
+    score: 0
+  - domain: juejin.cn
+    weight: 1
+    score: 0

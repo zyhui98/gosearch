@@ -3,7 +3,11 @@ package site
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 )
 
 const (
@@ -26,6 +30,8 @@ const (
 	BingSearch  = BingUrl + "/search?q=%s" + "&PC=U316&FORM=CHROMN"
 	BingFrom    = "Bing"
 )
+
+var config map[string]interface{}
 
 type SearchEngine interface {
 	Search() (result *EntityList)
@@ -70,11 +76,15 @@ type EntityList struct {
 }
 
 type Entity struct {
-	Title    string `json:"title"`
-	Host     string `json:"host"`
-	Url      string `json:"url"`
-	SubTitle string `json:"subTitle"`
-	From     string `json:"from"`
+	Title         string `json:"title"`
+	Host          string `json:"host"`
+	Url           string `json:"url"`
+	SubTitle      string `json:"subTitle"`
+	From          string `json:"from"`
+	Score         int    `json:"score"`
+	PositionScore int    `json:"positionScore"`
+	SearchScore   int    `json:"searchScore"`
+	DomainScore   int    `json:"domainScore"`
 }
 
 func init() {
@@ -83,4 +93,46 @@ func init() {
 
 func LoadConf() {
 	fmt.Println("load site conf")
+	path := "configs/config.yml"
+	fi, _ := os.Open(path)
+	configData, err := ioutil.ReadAll(fi)
+	if err != nil {
+		log.Fatal(err)
+	}
+	config = make(map[string]interface{})
+
+	// 执行解析
+	err = yaml.Unmarshal(configData, &config)
+	fmt.Printf("config:%v\n", config)
+}
+
+func GetSearchScore(name string) int {
+	search := config["search"].([]interface{})
+	for _, mo := range search {
+		m := mo.(map[interface{}]interface{})
+		if m["name"] == name {
+			return m["score"].(int) * m["weight"].(int)
+		}
+	}
+	return 0
+}
+func GetDomainScore(host string) int {
+	search := config["site"].([]interface{})
+	for _, mo := range search {
+		m := mo.(map[interface{}]interface{})
+		if m["domain"] == host {
+			return m["score"].(int) * m["weight"].(int)
+		}
+	}
+	return 0
+}
+func GetPositionWeight(domain string) int {
+	search := config["search"].([]interface{})
+	for _, mo := range search {
+		m := mo.(map[interface{}]interface{})
+		if m["name"] == domain {
+			return m["positionWeight"].(int)
+		}
+	}
+	return 1
 }
