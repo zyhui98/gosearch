@@ -1,0 +1,9 @@
+basic:
+  debug: true
+
+site:
+  - name: Baidu
+    domain: www.baidu.com
+    weight:
+  - name: Bing
+    domain: cn.bing.com
