@@ -12,6 +12,11 @@ search:
     weight: 1
     positionWeight: 1
     score: 10
+  - name: Google
+    domain: www.google.com
+    weight: 1
+    positionWeight: 1
+    score: 10
 
 site:
   - domain: www.csdn.com

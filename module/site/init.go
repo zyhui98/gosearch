@@ -9,7 +9,9 @@ import (
 var tr *http.Transport
 
 func init() {
+
 	tr = &http.Transport{
+		// 设置代理
 		MaxIdleConns: 100,
 		Dial: func(netw, addr string) (net.Conn, error) {
 			conn, err := net.DialTimeout(netw, addr, time.Second*2) //设置建立连接超时
