@@ -38,6 +38,14 @@ const (
 	GoogleAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
 	GoogleSearch = GoogleUrl + "/search?q=%s" + "&ie=UTF-8"
 	GoogleFrom   = "Google"
+
+	// =================Wx==================
+	WxCookie = "SUID=F84DCC781539960A000000006235D4E8; SUV=1647695080857391; ssuid=6792259580; weixinIndexVisited=1; sw_uuid=9184173056; IPLOC=CN3100; ABTEST=0|1668775030|v1; JSESSIONID=aaa2PBWFjHNS8hQ8_tfpy; cd=1668913493&0f942166ea05ede01cfe88195d36508d; rd=tyllllllll20WBOSYTuBqQ2iuqV0WBOqAfJbLZllll9llllxVllll5@@@@@@@@@@; SNUID=3F7EFC483134DE206C1BF1C931FF4D0B; ld=6Zllllllll20WBOSYTuBqQ2DdNH0WBOqAfJbLZllll9lllllVklll5@@@@@@@@@@; LSTMV=217%2C66; LCLKINT=1482; PHPSESSID=udut3pen5cml0b9849o68jch40; ariaDefaultTheme=undefined"
+	WxUrl    = "https://weixin.sogou.com"
+	WxDomain = "weixin.sogou.com"
+	WxAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+	WxSearch = WxUrl + "/weixin?type=2&s_from=input&query=%s&ie=utf8&_sug_=n&_sug_type_="
+	WxFrom   = "微信公众号"
 )
 
 var config map[string]interface{}
@@ -60,6 +68,11 @@ type Bing struct {
 }
 
 type Google struct {
+	Req  Req
+	resp Resp
+}
+
+type Wx struct {
 	Req  Req
 	resp Resp
 }

@@ -17,6 +17,11 @@ search:
     weight: 1
     positionWeight: 1
     score: 10
+  - name: 微信公众号
+    domain: weixin.sogou.com
+    weight: 1
+    positionWeight: 1
+    score: 10
 
 site:
   - domain: www.csdn.com
