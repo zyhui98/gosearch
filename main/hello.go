@@ -70,12 +70,15 @@ func search(w http.ResponseWriter, request *http.Request) {
 
 	array := [...]site.SearchEngine{
 		&site.Wx{Req: site.Req{Q: q}},
-		//&site.Google{Req: site.Req{Q: q}},
+		&site.Google{Req: site.Req{Q: q}},
 		&site.Bing{Req: site.Req{Q: q}},
-		//&site.Baidu{Req: site.Req{Q: q}},
+		&site.Baidu{Req: site.Req{Q: q}},
 	}
 
 	for _, engine := range array {
+		if !engine.Enable() {
+			continue
+		}
 		result := engine.(site.SearchEngine).Search()
 
 		jsonResult.Data.Size += result.Size

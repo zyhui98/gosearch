@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+func (wx *Wx) Enable() (enable bool) {
+	return GetEnable(WxDomain)
+}
+
 func (wx *Wx) Search() (result *EntityList) {
 	wx.Req.url = wx.urlWrap()
 	fmt.Printf("req.url: %s\n", wx.Req.url)

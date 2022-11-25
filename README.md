@@ -32,6 +32,56 @@
 go run main/hello.go 
 ``
 
+**配置文件**
+
+路径：``configs/config.yml``
+
+```
+server:
+  debug: false
+
+search:
+  - name: Baidu
+    domain: www.baidu.com
+    weight: 1 #搜索引擎权重因子
+    positionWeight: 1 #搜索引擎自然排序权重因子
+    score: 0 #搜索引擎设置的附加得分
+    enable: false #是否开启
+  - name: Bing
+    domain: cn.bing.com
+    weight: 1
+    positionWeight: 1
+    score: 10
+    enable: true
+  - name: Google
+    domain: www.google.com
+    weight: 1
+    positionWeight: 1
+    score: 10
+    enable: false
+  - name: 微信公众号
+    domain: weixin.sogou.com
+    weight: 1
+    positionWeight: 1
+    score: 10
+    enable: true
+
+site:
+  - domain: www.csdn.com
+    weight: 1 #域名权重因子
+    score: 0 #网站域名设置的附加得分
+  - domain: zhuanlan.zhihu.com
+    weight: 1
+    score: 0
+  - domain: www.yuanbiguo.com
+    weight: 1
+    score: 0
+  - domain: juejin.cn
+    weight: 1
+    score: 0
+
+```
+
 **示意图**
 ![](html/demo.png)
 

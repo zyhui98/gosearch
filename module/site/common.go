@@ -52,6 +52,7 @@ var config map[string]interface{}
 
 type SearchEngine interface {
 	Search() (result *EntityList)
+	Enable() (enable bool)
 	urlWrap() (url string)
 	toEntityList() (entityList *EntityList)
 	send() (resp *Resp, err error)
@@ -144,8 +145,8 @@ func GetSearchScore(name string) int {
 	return 0
 }
 func GetDomainScore(host string) int {
-	search := config["site"].([]interface{})
-	for _, mo := range search {
+	site := config["site"].([]interface{})
+	for _, mo := range site {
 		m := mo.(map[interface{}]interface{})
 		if m["domain"] == host {
 			return m["score"].(int) * m["weight"].(int)
@@ -162,4 +163,14 @@ func GetPositionWeight(domain string) int {
 		}
 	}
 	return 1
+}
+func GetEnable(domain string) bool {
+	search := config["search"].([]interface{})
+	for _, mo := range search {
+		m := mo.(map[interface{}]interface{})
+		if m["domain"] == domain {
+			return m["enable"].(bool)
+		}
+	}
+	return false
 }

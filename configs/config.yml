@@ -1,5 +1,5 @@
 server:
-  debug: true
+  debug: false
 
 search:
   - name: Baidu
@@ -7,21 +7,25 @@ search:
     weight: 1
     positionWeight: 1
     score: 0
+    enable: false
   - name: Bing
     domain: cn.bing.com
     weight: 1
     positionWeight: 1
     score: 10
+    enable: false
   - name: Google
     domain: www.google.com
     weight: 1
     positionWeight: 1
     score: 10
+    enable: false
   - name: 微信公众号
     domain: weixin.sogou.com
     weight: 1
     positionWeight: 1
     score: 10
+    enable: true
 
 site:
   - domain: www.csdn.com

@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+func (g *Google) Enable() (enable bool) {
+	return GetEnable(GoogleDomain)
+}
+
 func (g *Google) Search() (result *EntityList) {
 	g.Req.url = g.urlWrap()
 	fmt.Printf("req.url: %s\n", g.Req.url)

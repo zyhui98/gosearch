@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+func (baidu *Baidu) Enable() (enable bool) {
+	return GetEnable(BaiduDomain)
+}
+
 func (baidu *Baidu) Search() (result *EntityList) {
 	baidu.Req.url = baidu.urlWrap()
 	fmt.Printf("req.url: %s\n", baidu.Req.url)

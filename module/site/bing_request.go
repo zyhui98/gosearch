@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+func (bing *Bing) Enable() (enable bool) {
+	return GetEnable(BingDomain)
+}
+
 func (bing *Bing) Search() (result *EntityList) {
 	bing.Req.url = bing.urlWrap()
 	fmt.Printf("req.url: %s\n", bing.Req.url)
