@@ -17,31 +17,68 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="input-group">
-                <input @keyup.enter="search" v-model="q" id="q" type="text" class="form-control" placeholder="Search for..."/>
+                <input @keyup.enter="search" v-model="q" id="q" type="text" class="form-control"
+                       placeholder="Search for..."/>
                 <span class="input-group-btn"/>
                 <button type="button" class="btn btn-outline-primary" @click="search">搜索</button>
             </div><!-- /.col-lg-6 -->
         </div>
+
     </div><!-- /.row -->
-    <div class="row">&nbsp;</div>
+    <div class="row">
+        <p></p>
+    </div>
+    <div class="row" v-if="tips && !wait">&nbsp;
+        <div class="col-lg-6">
+            <p class="fw-light">
+                <span>耗时{{data.cost}}ms</span>,<span>找到{{list.length}}条记录</span>
+            </p>
+        </div>
+    </div>
     <div class="row" v-if="wait">
-        <div class="card" style="width: 60%">
-            {{wait}}
+        <div class="col-lg-6">
+            <div class="spinner-grow text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-success" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-danger" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-dark" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
     </div>
 
     <template v-for="d in list" v-if="!wait">
         <div class="row">
-            <div class="card" style="width: 60%">
-                <div class="card-body">
-                    <a :href="d.url" target="_blank"><h5 class="card-title">{{d.title}}</h5></a>
-                    <h6 class="card-subtitle mb-2 text-muted">{{d.host}}
-                        <button type="button" class="btn btn-outline-info">{{d.from}}</button>
-                        <button type="button" class="btn btn-outline-info">{{d.score}}</button>
-                    </h6>
-                    <p class="card-text">{{d.subTitle}}</p>
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-body">
+                        <a :href="d.url" target="_blank"><h5 class="card-title">{{d.title}}</h5></a>
+                        <h6 class="card-subtitle mb-2 text-muted">{{d.host}}
+                            <button type="button" class="btn btn-outline-info">{{d.from}}</button>
+                            <button type="button" class="btn btn-outline-info">{{d.score}}</button>
+                        </h6>
+                        <p class="card-text">{{d.subTitle}}</p>
+                    </div>
                 </div>
             </div>
+
         </div>
     </template>
 
@@ -58,7 +95,11 @@
             return {
                 message: 'Hello Vue!!',
                 wait: '',
+                tips: false,
                 list: [],
+                data: {
+                    cost: 0
+                },
                 q: ''
             }
         },
@@ -69,6 +110,8 @@
                     .get('/search?q=' + this.q)
                     .then(response => {
                         this.wait = ''
+                        this.tips = true
+                        this.data = response.data
                         this.list = response.data.data.list
                     })
                     .catch(error => {

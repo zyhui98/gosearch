@@ -17,7 +17,7 @@ func (g *Google) Enable() (enable bool) {
 
 func (g *Google) Search() (result *EntityList) {
 	g.Req.url = g.urlWrap()
-	fmt.Printf("req.url: %s\n", g.Req.url)
+	log.Printf("req.url: %s\n", g.Req.url)
 	resp := &Resp{}
 	resp, _ = g.send()
 	g.resp = *resp
@@ -35,7 +35,7 @@ func (g *Google) toEntityList() (entityList *EntityList) {
 
 	if g.resp.doc != nil {
 		// Find the review items
-		//fmt.Printf("Review doc: %s\n", g.resp.doc.Text())
+		//log.Printf("Review doc: %s\n", g.resp.doc.Text())
 		g.resp.doc.Find("div[class=MjjYud]").Each(func(i int, s *goquery.Selection) {
 			// For each item found, get the Title
 			title := s.Find("div[class=yuRUbf]").Find("h3").Text()
@@ -44,11 +44,6 @@ func (g *Google) toEntityList() (entityList *EntityList) {
 			}
 			url := s.Find("div[class=yuRUbf]").Find("a").AttrOr("href", "")
 			subTitle := s.Find("div[class='Z26q7c UK95Uc']").Find("span").Text()
-			if Debug {
-				fmt.Printf("Review Title: %s\n", title)
-				fmt.Printf("Review Url: %s\n", url)
-				fmt.Printf("Review SubTitle: %s\n", subTitle)
-			}
 			entity := Entity{From: GoogleFrom}
 			entity.Title = title
 			entity.SubTitle = subTitle

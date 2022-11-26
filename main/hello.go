@@ -2,13 +2,13 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"gosearch/module/site"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"sort"
+	"time"
 )
 
 type EntityWrapper struct { //注意此处
@@ -49,19 +49,25 @@ func main() {
 
 //定义handle处理函数，只要该health被调用，就会写入ok
 func health(w http.ResponseWriter, request *http.Request) {
-	fmt.Println(request.URL)
+	log.Println(request.URL)
 	_ = request.ParseForm()
-	fmt.Println(request.Form.Get("user"))
+	log.Println(request.Form.Get("user"))
 	_, _ = io.WriteString(w, "ok")
 }
 
-func search(w http.ResponseWriter, request *http.Request) {
+func subSearch(se site.SearchEngine, c chan *site.EntityList) {
+	if se.Enable() {
+		c <- se.Search()
+	}
+}
 
-	fmt.Println(request.URL)
+func search(w http.ResponseWriter, request *http.Request) {
+	log.Println(request.URL)
 	_ = request.ParseForm()
 	q := request.Form.Get("q")
 	q = url.QueryEscape(q)
-	fmt.Printf("查询内容:%s\n", q)
+	log.Printf("查询内容:%s\n", q)
+	start := time.Now().UnixNano()
 	jsonResult := &site.JsonResult{Code: 0, Data: &site.EntityList{
 		Index: 0,
 		Size:  0,
@@ -75,12 +81,18 @@ func search(w http.ResponseWriter, request *http.Request) {
 		&site.Baidu{Req: site.Req{Q: q}},
 	}
 
+	cLen := 0
 	for _, engine := range array {
-		if !engine.Enable() {
-			continue
+		if engine.Enable() {
+			cLen++
 		}
-		result := engine.(site.SearchEngine).Search()
+	}
+	c := make(chan *site.EntityList, cLen)
+	for _, engine := range array {
+		go subSearch(engine, c)
+	}
 
+	for result := range c {
 		jsonResult.Data.Size += result.Size
 		for i, entity := range result.List {
 			//初始化自然排序
@@ -90,6 +102,10 @@ func search(w http.ResponseWriter, request *http.Request) {
 			entity.Score = entity.PositionScore + entity.SearchScore + entity.DomainScore
 			jsonResult.Data.List = append(jsonResult.Data.List, entity)
 		}
+		cLen--
+		if cLen == 0 {
+			close(c)
+		}
 	}
 
 	// sort score
@@ -98,6 +114,8 @@ func search(w http.ResponseWriter, request *http.Request) {
 		return p.Score > q.Score
 	}})
 
+	// 构造返回
+	jsonResult.Cost = (time.Now().UnixNano() - start) / 1e6
 	body, err := json.Marshal(jsonResult)
 	if err != nil {
 		jsonResult.Code = -1

@@ -14,7 +14,7 @@ func (bing *Bing) Enable() (enable bool) {
 
 func (bing *Bing) Search() (result *EntityList) {
 	bing.Req.url = bing.urlWrap()
-	fmt.Printf("req.url: %s\n", bing.Req.url)
+	log.Printf("req.url: %s\n", bing.Req.url)
 	resp := &Resp{}
 	resp, _ = bing.send()
 	bing.resp = *resp
@@ -32,17 +32,12 @@ func (bing *Bing) toEntityList() (entityList *EntityList) {
 
 	if bing.resp.doc != nil {
 		// Find the review items
-		//fmt.Printf("Review doc: %s\n", resp.doc.Text())
+		//log.Printf("Review doc: %s\n", resp.doc.Text())
 		bing.resp.doc.Find("ol#b_results>li[class=b_algo]").Each(func(i int, s *goquery.Selection) {
 			// For each item found, get the Title
 			title := s.Find("div[class=b_title]>h2>a").Text()
 			url := s.Find("div[class=b_attribution]>cite").Text()
 			subTitle := s.Find("div[class=b_caption]>p").Text()
-			if Debug {
-				fmt.Printf("Review Title: %s\n", title)
-				fmt.Printf("Review Url: %s\n", url)
-				fmt.Printf("Review SubTitle: %s\n", subTitle)
-			}
 			entity := Entity{From: BingFrom}
 			entity.Title = title
 			entity.SubTitle = subTitle

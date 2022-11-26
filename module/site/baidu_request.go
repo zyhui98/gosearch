@@ -14,7 +14,7 @@ func (baidu *Baidu) Enable() (enable bool) {
 
 func (baidu *Baidu) Search() (result *EntityList) {
 	baidu.Req.url = baidu.urlWrap()
-	fmt.Printf("req.url: %s\n", baidu.Req.url)
+	log.Printf("req.url: %s\n", baidu.Req.url)
 	resp := &Resp{}
 	resp, _ = baidu.send()
 	baidu.resp = *resp
@@ -32,7 +32,7 @@ func (baidu *Baidu) toEntityList() (entityList *EntityList) {
 
 	if baidu.resp.doc != nil {
 		// Find the review items
-		//fmt.Printf("Review doc: %s\n", resp.doc.Text())
+		//log.Printf("Review doc: %s\n", resp.doc.Text())
 		baidu.resp.doc.Find("div[srcid]").Each(func(i int, s *goquery.Selection) {
 			// For each item found, get the Title
 			title := s.Find("h3").Find("a").Text()
@@ -42,11 +42,6 @@ func (baidu *Baidu) toEntityList() (entityList *EntityList) {
 				return
 			}
 			subTitle := s.Find(".c-gap-top-small").Find("span").Text()
-			if Debug {
-				fmt.Printf("Review Title: %s\n", title)
-				fmt.Printf("Review Url: %s\n", url)
-				fmt.Printf("Review SubTitle: %s\n", subTitle)
-			}
 			entity := Entity{From: BaiduFrom}
 			entity.Title = title
 			entity.SubTitle = subTitle

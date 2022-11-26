@@ -1,7 +1,6 @@
 package site
 
 import (
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -40,7 +39,7 @@ const (
 	GoogleFrom   = "Google"
 
 	// =================Wx==================
-	WxCookie = "SUID=F84DCC781539960A000000006235D4E8; SUV=1647695080857391; ssuid=6792259580; weixinIndexVisited=1; sw_uuid=9184173056; IPLOC=CN3100; ABTEST=0|1668775030|v1; JSESSIONID=aaa2PBWFjHNS8hQ8_tfpy; cd=1668913493&0f942166ea05ede01cfe88195d36508d; rd=tyllllllll20WBOSYTuBqQ2iuqV0WBOqAfJbLZllll9llllxVllll5@@@@@@@@@@; SNUID=3F7EFC483134DE206C1BF1C931FF4D0B; ld=6Zllllllll20WBOSYTuBqQ2DdNH0WBOqAfJbLZllll9lllllVklll5@@@@@@@@@@; LSTMV=217%2C66; LCLKINT=1482; PHPSESSID=udut3pen5cml0b9849o68jch40; ariaDefaultTheme=undefined"
+	WxCookie = "SUID=F84DCC781539960A000000006235D4E8; SUV=1647695080857391; ssuid=6792259580; weixinIndexVisited=1; IPLOC=CN3100; ABTEST=0|1668775030|v1; JSESSIONID=aaa2PBWFjHNS8hQ8_tfpy; cd=1668913493&0f942166ea05ede01cfe88195d36508d; rd=tyllllllll20WBOSYTuBqQ2iuqV0WBOqAfJbLZllll9llllxVllll5@@@@@@@@@@; ld=6Zllllllll20WBOSYTuBqQ2DdNH0WBOqAfJbLZllll9lllllVklll5@@@@@@@@@@; LSTMV=217%2C66; LCLKINT=1482; PHPSESSID=udut3pen5cml0b9849o68jch40; SNUID=36CA4AFD85836BDC653D88E686DAE430; ariaDefaultTheme=undefined"
 	WxUrl    = "https://weixin.sogou.com"
 	WxDomain = "weixin.sogou.com"
 	WxAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
@@ -79,6 +78,7 @@ type Wx struct {
 }
 
 type JsonResult struct {
+	Cost int64       `json:"cost"`
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data *EntityList `json:"data"`
@@ -116,11 +116,11 @@ type Entity struct {
 }
 
 func init() {
-	fmt.Printf("site init,Debug:%v, UserAgent:%v\n", Debug, UserAgent)
+	log.Printf("site init,Debug:%v, UserAgent:%v\n", Debug, UserAgent)
 }
 
 func LoadConf() {
-	fmt.Println("load site conf")
+	log.Println("load site conf")
 	path := "configs/config.yml"
 	fi, _ := os.Open(path)
 	configData, err := ioutil.ReadAll(fi)
@@ -131,7 +131,7 @@ func LoadConf() {
 
 	// 执行解析
 	err = yaml.Unmarshal(configData, &config)
-	fmt.Printf("config:%v\n", config)
+	log.Printf("config:%v\n", config)
 }
 
 func GetSearchScore(name string) int {

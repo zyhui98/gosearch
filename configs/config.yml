@@ -7,22 +7,22 @@ search:
     weight: 1
     positionWeight: 1
     score: 0
-    enable: false
+    enable: true
   - name: Bing
     domain: cn.bing.com
     weight: 1
     positionWeight: 1
     score: 10
-    enable: false
+    enable: true
   - name: Google
     domain: www.google.com
     weight: 1
     positionWeight: 1
     score: 10
-    enable: false
+    enable: true
   - name: 微信公众号
     domain: weixin.sogou.com
-    weight: 1
+    weight: 2
     positionWeight: 1
     score: 10
     enable: true
@@ -40,3 +40,6 @@ site:
   - domain: juejin.cn
     weight: 1
     score: 0
+  - domain: github.com
+    weight: 10
+    score: 10

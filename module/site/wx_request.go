@@ -14,7 +14,7 @@ func (wx *Wx) Enable() (enable bool) {
 
 func (wx *Wx) Search() (result *EntityList) {
 	wx.Req.url = wx.urlWrap()
-	fmt.Printf("req.url: %s\n", wx.Req.url)
+	log.Printf("req.url: %s\n", wx.Req.url)
 	resp := &Resp{}
 	resp, _ = wx.send()
 	wx.resp = *resp
@@ -32,7 +32,7 @@ func (wx *Wx) toEntityList() (entityList *EntityList) {
 
 	if wx.resp.doc != nil {
 		// Find the review items
-		//fmt.Printf("Review doc: %s\n", resp.doc.Text())
+		//log.Printf("Wx Review doc: %s\n", wx.resp.doc.Text())
 		wx.resp.doc.Find("div[class='txt-box']").Each(func(i int, s *goquery.Selection) {
 			// For each item found, get the Title
 			title := s.Find("h3").Find("a").Text()
