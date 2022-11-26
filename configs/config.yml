@@ -42,4 +42,4 @@ site:
     score: 0
   - domain: github.com
     weight: 10
-    score: 10
+    score: 1
