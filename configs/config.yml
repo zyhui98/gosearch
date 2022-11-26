@@ -2,11 +2,11 @@ server:
   debug: false
 
 search:
-  - name: Baidu
+  - name: 百度
     domain: www.baidu.com
     weight: 1
     positionWeight: 1
-    score: 0
+    score: 10
     enable: true
   - name: Bing
     domain: cn.bing.com
@@ -22,7 +22,7 @@ search:
     enable: true
   - name: 微信公众号
     domain: weixin.sogou.com
-    weight: 2
+    weight: 1
     positionWeight: 1
     score: 10
     enable: true
@@ -30,16 +30,16 @@ search:
 site:
   - domain: www.csdn.com
     weight: 1
-    score: 0
+    score: 1
   - domain: zhuanlan.zhihu.com
     weight: 1
-    score: 0
+    score: 1
   - domain: www.yuanbiguo.com
     weight: 1
-    score: 0
+    score: 1
   - domain: juejin.cn
     weight: 1
-    score: 0
+    score: 1
   - domain: github.com
     weight: 10
     score: 1

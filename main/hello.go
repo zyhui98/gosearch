@@ -95,6 +95,9 @@ func search(w http.ResponseWriter, request *http.Request) {
 	for result := range c {
 		jsonResult.Data.Size += result.Size
 		for i, entity := range result.List {
+			if i == 0 {
+				log.Println("for enter:" + entity.From)
+			}
 			//初始化自然排序
 			entity.PositionScore = (len(result.List) - i) * site.GetPositionWeight(entity.From)
 			entity.SearchScore = site.GetSearchScore(entity.From)
