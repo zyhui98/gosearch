@@ -112,8 +112,9 @@ func (g *Google) send() (resp *Resp, err error) {
 	}
 	defer response.Body.Close()
 	if response.StatusCode != 200 {
+		resp.code = response.StatusCode
 		log.Fatalf("status code error: %d %s", response.StatusCode, response.Status)
-		return nil, nil
+		return resp, nil
 	}
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(response.Body)
