@@ -74,7 +74,7 @@ func (g *Google) send() (resp *Resp, err error) {
 			if err != nil {
 				return nil, err
 			}
-			err = conn.SetDeadline(time.Now().Add(time.Second * 3)) //设置发送接受数据超时
+			err = conn.SetDeadline(time.Now().Add(time.Second * 6)) //设置发送接受数据超时
 			if err != nil {
 				return nil, err
 			}
