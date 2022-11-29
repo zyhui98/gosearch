@@ -105,21 +105,22 @@ func (g *Google) send() (resp *Resp, err error) {
 	}
 
 	//处理返回结果
-	response, err := client.Do(request)
+	response, _ := client.Do(request)
 	if response == nil {
-		log.Fatalf("response nil: %v", err)
-		return nil, nil
-	}
-	defer response.Body.Close()
-	if response.StatusCode != 200 {
-		resp.code = response.StatusCode
-		log.Fatalf("status code error: %d %s", response.StatusCode, response.Status)
+		resp.code = 500
+		log.Printf("response nil: %v\n", err)
 		return resp, nil
 	}
+	if response.StatusCode != 200 {
+		resp.code = response.StatusCode
+		log.Printf("status code error: %d %s\n", response.StatusCode, response.Status)
+		return resp, nil
+	}
+	defer response.Body.Close()
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	resp.code = 200
