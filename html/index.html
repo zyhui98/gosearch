@@ -1,5 +1,5 @@
 <!doctype html>
-<html id="myHtml" lang="zh-CN" theme="">
+<html id="myHtml" lang="zh-CN" theme="dark-mode">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -107,7 +107,7 @@
         ,
         methods: {
             switchTheme() {
-                if (!this.switchValue) {
+                if (this.switchValue) {
                     document.getElementById("myHtml").setAttribute("theme", 'dark-mode')
                 } else {
                     document.getElementById("myHtml").setAttribute("theme", '')
