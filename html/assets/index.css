@@ -1,4 +1,16 @@
 div.homepage {
     margin:25px 56px;
 }
+div.html-mode {
+    margin-left: 50%;
+}
+html[theme='dark-mode'] {
+    filter: invert(1) hue-rotate(180deg);
+}
+html[theme='dark-mode'] img{
+    filter: invert(1) hue-rotate(180deg);
+}
+html {
+    transition: color 300ms, background-color 300ms;
+}
 

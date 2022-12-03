@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html id="myHtml" lang="zh-CN" theme="">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,8 +11,20 @@
 </head>
 <body>
 <div class="homepage" id="hello-vue">
-    <div class="page-header">
-        <h1>GoSearch <small>Beta 1.0</small></h1>
+    <div class="page-header row">
+
+        <div class="col-lg-6">
+            <h1>GoSearch <small>Beta 1.0</small></h1>
+        </div>
+        <div class="col-lg-6">
+            <div class="html-mode">
+                <div class="form-check form-switch">
+                    <input v-model="switchValue" class="form-check-input" type="checkbox"
+                           id="flexSwitchCheckDefault" @click="switchTheme()">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">暗黑</label>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col-lg-6">
@@ -37,30 +49,7 @@
     </div>
     <div class="row" v-if="wait">
         <div class="col-lg-6">
-            <div class="spinner-grow text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-secondary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-success" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-danger" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-warning" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-info" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-light" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="spinner-grow text-dark" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
+            <span>{{wait}}</span>
         </div>
     </div>
 
@@ -97,13 +86,34 @@
                 wait: '',
                 tips: false,
                 list: [],
+                theme: '',
                 data: {
                     cost: 0
                 },
-                q: ''
+                q: '',
+                switchValue: false
             }
         },
+        mounted() {
+            let url = window.location.href
+            let query = url.split('?')[1]
+            let queryMap = new URLSearchParams('?' + query)
+            let urlQ = queryMap.get('q')
+            if (urlQ) {
+                this.q = urlQ
+                this.search()
+            }
+        }
+        ,
         methods: {
+            switchTheme() {
+                if (!this.switchValue) {
+                    document.getElementById("myHtml").setAttribute("theme", 'dark-mode')
+                } else {
+                    document.getElementById("myHtml").setAttribute("theme", '')
+                }
+
+            },
             search() {
                 this.wait = '加载中...'
                 axios
