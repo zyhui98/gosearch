@@ -26,13 +26,21 @@
 
 ## 使用说明
 
-**启动**
+### 启动
 
-``
-go run main/hello.go 
-``
+#### 本地启动
 
-**配置文件**
+```
+go run main.go 
+```
+
+
+#### Dock启动
+```
+docker run -d -p 80:80 zyhui98/gosearch:v1.0
+```
+
+### 配置文件
 
 路径：``configs/config.yml``
 
@@ -82,7 +90,7 @@ site:
 
 ```
 
-**示意图**
+### 示意图
 ![](html/demo.png)
 
 ## 参与贡献
