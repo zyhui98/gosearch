@@ -75,10 +75,10 @@ func (wx *Wx) send() (resp *Resp, err error) {
 	}
 
 	//处理返回结果
-	response, _ := client.Do(request)
+	response, e := client.Do(request)
 	if response == nil {
 		resp.code = 500
-		log.Printf("response nil: %v\n", err)
+		log.Printf("response nil: %v\n", e)
 		return resp, nil
 	}
 	if response.StatusCode != 200 {
