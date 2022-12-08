@@ -65,7 +65,7 @@ func (g *Google) send() (resp *Resp, err error) {
 		log.Fatalf("url.Parse: %v", err)
 	}
 
-	tr = &http.Transport{
+	trProxy := &http.Transport{
 		// 设置代理
 		Proxy:        http.ProxyURL(uri),
 		MaxIdleConns: 100,
@@ -83,7 +83,7 @@ func (g *Google) send() (resp *Resp, err error) {
 	}
 
 	client := &http.Client{
-		Transport: tr,
+		Transport: trProxy,
 	}
 	//提交请求
 	request, err := http.NewRequest("GET", g.urlWrap(), nil)
