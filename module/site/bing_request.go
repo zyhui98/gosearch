@@ -36,7 +36,7 @@ func (bing *Bing) toEntityList() (entityList *EntityList) {
 		bing.resp.doc.Find("ol#b_results>li[class=b_algo]").Each(func(i int, s *goquery.Selection) {
 			// For each item found, get the Title
 			title := s.Find("div[class=b_title]>h2>a").Text()
-			url := s.Find("div[class=b_attribution]>cite").Text()
+			url := s.Find("div[class=b_title]>h2>a").AttrOr("href", "")
 			subTitle := s.Find("div[class=b_caption]>p").Text()
 			entity := Entity{From: BingFrom}
 			entity.Title = title
