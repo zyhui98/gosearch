@@ -58,7 +58,6 @@ func (g *Google) toEntityList() (entityList *EntityList) {
 }
 
 func (g *Google) send() (resp *Resp, err error) {
-	resp = &Resp{code: 200}
 
 	uri, err := url.Parse(ProxyURL)
 	if err != nil {
@@ -99,32 +98,6 @@ func (g *Google) send() (resp *Resp, err error) {
 	request.Header.Add("authority", "www.google.com")
 	//request.Header.Add("accept-encoding", "gzip, deflate, br")
 	request.Header.Add("accept-language", "zh-CN,zh;q=0.9,en;q=0.8")
-	//request.Header.Add("X-Requested-With", "XMLHttpRequest")
-	if err != nil {
-		panic(err)
-	}
+	return SendDo(client, request)
 
-	//处理返回结果
-	response, e := client.Do(request)
-	if response == nil {
-		resp.code = 500
-		log.Printf("response nil: %v\n", e)
-		return resp, nil
-	}
-	if response.StatusCode != 200 {
-		resp.code = response.StatusCode
-		log.Printf("status code error: %d %s\n", response.StatusCode, response.Status)
-		return resp, nil
-	}
-	defer response.Body.Close()
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(response.Body)
-	if err != nil {
-		log.Println(err)
-	}
-
-	resp.code = 200
-	resp.doc = doc
-
-	return resp, nil
 }

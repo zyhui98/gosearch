@@ -56,7 +56,6 @@ func (baidu *Baidu) toEntityList() (entityList *EntityList) {
 }
 
 func (baidu *Baidu) send() (resp *Resp, err error) {
-	resp = &Resp{code: 200}
 
 	client := &http.Client{
 		Transport: tr,
@@ -72,32 +71,7 @@ func (baidu *Baidu) send() (resp *Resp, err error) {
 	request.Header.Add("Host", BaiduDomain)
 	request.Header.Add("Cookie", BaiduCookie)
 	request.Header.Add("Accept", BaiduAccept)
-	//request.Header.Add("X-Requested-With", "XMLHttpRequest")
-	if err != nil {
-		panic(err)
-	}
 
-	//处理返回结果
-	response, e := client.Do(request)
-	if response == nil {
-		resp.code = 500
-		log.Printf("response nil: %v\n", e)
-		return resp, nil
-	}
-	if response.StatusCode != 200 {
-		resp.code = response.StatusCode
-		log.Printf("status code error: %d %s\n", response.StatusCode, response.Status)
-		return resp, nil
-	}
-	defer response.Body.Close()
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(response.Body)
-	if err != nil {
-		log.Println(err)
-	}
+	return SendDo(client, request)
 
-	resp.code = 200
-	resp.doc = doc
-
-	return resp, nil
 }

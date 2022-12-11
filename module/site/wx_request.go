@@ -53,7 +53,6 @@ func (wx *Wx) toEntityList() (entityList *EntityList) {
 }
 
 func (wx *Wx) send() (resp *Resp, err error) {
-	resp = &Resp{code: 200}
 
 	client := &http.Client{
 		Transport: tr,
@@ -69,32 +68,7 @@ func (wx *Wx) send() (resp *Resp, err error) {
 	request.Header.Add("Host", WxDomain)
 	request.Header.Add("Cookie", WxCookie)
 	request.Header.Add("Accept", WxAccept)
-	//request.Header.Add("X-Requested-With", "XMLHttpRequest")
-	if err != nil {
-		panic(err)
-	}
 
-	//处理返回结果
-	response, e := client.Do(request)
-	if response == nil {
-		resp.code = 500
-		log.Printf("response nil: %v\n", e)
-		return resp, nil
-	}
-	if response.StatusCode != 200 {
-		resp.code = response.StatusCode
-		log.Printf("status code error: %d %s\n", response.StatusCode, response.Status)
-		return resp, nil
-	}
-	defer response.Body.Close()
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(response.Body)
-	if err != nil {
-		log.Println(err)
-	}
+	return SendDo(client, request)
 
-	resp.code = 200
-	resp.doc = doc
-
-	return resp, nil
 }

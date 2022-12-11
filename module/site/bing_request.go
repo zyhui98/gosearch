@@ -52,7 +52,6 @@ func (bing *Bing) toEntityList() (entityList *EntityList) {
 }
 
 func (bing *Bing) send() (resp *Resp, err error) {
-	resp = &Resp{code: 200}
 
 	client := &http.Client{
 		Transport: tr,
@@ -68,32 +67,6 @@ func (bing *Bing) send() (resp *Resp, err error) {
 	request.Header.Add("Host", BingDomain)
 	request.Header.Add("Cookie", BingCoolkie)
 	request.Header.Add("Accept", BingAccept)
-	//request.Header.Add("X-Requested-With", "XMLHttpRequest")
-	if err != nil {
-		panic(err)
-	}
 
-	//处理返回结果
-	response, e := client.Do(request)
-	if response == nil {
-		resp.code = 500
-		log.Printf("response nil: %v\n", e)
-		return resp, nil
-	}
-	if response.StatusCode != 200 {
-		resp.code = response.StatusCode
-		log.Printf("status code error: %d %s\n", response.StatusCode, response.Status)
-		return resp, nil
-	}
-	defer response.Body.Close()
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(response.Body)
-	if err != nil {
-		log.Println(err)
-	}
-
-	resp.code = 200
-	resp.doc = doc
-
-	return resp, nil
+	return SendDo(client, request)
 }
