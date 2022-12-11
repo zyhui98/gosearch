@@ -138,6 +138,16 @@ func LoadConf() {
 	log.Printf("config:%v\n", config)
 }
 
+func GetDebug() bool {
+	server := config["server"].(map[interface{}]interface{})
+	return server["debug"].(bool)
+}
+
+func GetPort() int {
+	server := config["server"].(map[interface{}]interface{})
+	return server["port"].(int)
+}
+
 func GetSearchScore(name string) int {
 	search := config["search"].([]interface{})
 	for _, mo := range search {

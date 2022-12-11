@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"gosearch/module/site"
 	"io"
 	"log"
@@ -41,7 +42,7 @@ func main() {
 		log.Println("go out")
 	}()
 	//handle定义请求访问该服务器里的/health路径，就有下面health去处理，health一般为健康检查
-	err := http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%v", site.GetPort()), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
