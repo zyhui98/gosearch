@@ -30,16 +30,16 @@
 
 ### 启动
 
-#### 本地启动
-
-```
-go run main.go 
-```
-
+访问地址：http://127.0.0.1
 
 #### Dock启动
 ```
 docker run -d -p 80:80 zyhui98/gosearch:v1.0
+```
+
+#### 本地启动
+```
+go run main.go 
 ```
 
 ### 配置文件
