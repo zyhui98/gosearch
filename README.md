@@ -49,6 +49,7 @@ go run main.go
 ```
 server:
   debug: false
+  port: 8080
 
 search:
   - name: Baidu
