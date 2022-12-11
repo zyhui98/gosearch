@@ -30,7 +30,7 @@
 
 ### 启动
 
-访问地址：[http://127.0.0.1:8080](http://127.0.0.1:8080)
+访问地址：[http://127.0.0.1](http://127.0.0.1)
 
 #### Dock启动
 ```
@@ -49,7 +49,7 @@ go run main.go
 ```
 server:
   debug: false
-  port: 8080
+  port: 80
 
 search:
   - name: Baidu
