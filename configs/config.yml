@@ -8,7 +8,7 @@ search:
     weight: 1
     positionWeight: 1
     score: 10
-    enable: true
+    enable: false
   - name: Bing
     domain: cn.bing.com
     weight: 1
@@ -20,7 +20,7 @@ search:
     weight: 1
     positionWeight: 1
     score: 10
-    enable: false
+    enable: true
   - name: 微信公众号
     domain: weixin.sogou.com
     weight: 1

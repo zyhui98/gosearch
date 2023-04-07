@@ -59,26 +59,28 @@ func (g *Google) toEntityList() (entityList *EntityList) {
 
 func (g *Google) send() (resp *Resp, err error) {
 
-	uri, err := url.Parse(ProxyURL)
-	if err != nil {
-		log.Fatalf("url.Parse: %v", err)
-	}
-
-	trProxy := &http.Transport{
-		// 设置代理
-		Proxy:        http.ProxyURL(uri),
-		MaxIdleConns: 100,
-		Dial: func(netw, addr string) (net.Conn, error) {
-			conn, err := net.DialTimeout(netw, addr, time.Second*2) //设置建立连接超时
-			if err != nil {
-				return nil, err
-			}
-			err = conn.SetDeadline(time.Now().Add(time.Second * 6)) //设置发送接受数据超时
-			if err != nil {
-				return nil, err
-			}
-			return conn, nil
-		},
+	trProxy := tr
+	if ProxyOpen {
+		uri, err := url.Parse(ProxyURL)
+		if err != nil {
+			log.Fatalf("url.Parse: %v", err)
+		}
+		trProxy = &http.Transport{
+			// 设置代理
+			Proxy:        http.ProxyURL(uri),
+			MaxIdleConns: 100,
+			Dial: func(netw, addr string) (net.Conn, error) {
+				conn, err := net.DialTimeout(netw, addr, time.Second*2) //设置建立连接超时
+				if err != nil {
+					return nil, err
+				}
+				err = conn.SetDeadline(time.Now().Add(time.Second * 6)) //设置发送接受数据超时
+				if err != nil {
+					return nil, err
+				}
+				return conn, nil
+			},
+		}
 	}
 
 	client := &http.Client{
