@@ -1,7 +1,6 @@
 # GoSearch
 
-演示地址：[http://s.install.ren](http://s.install.ren/) 
->感谢三丰云的免费云服务器，虽然要5天打卡一下，但是使用还是很丝滑的
+演示地址：[http://45.76.240.91/](http://45.76.240.91/) 
 
 ## 示意图
 ![](html/demo.png)
